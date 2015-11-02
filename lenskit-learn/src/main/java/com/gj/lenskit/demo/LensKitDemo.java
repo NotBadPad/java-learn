@@ -10,6 +10,7 @@ import org.grouplens.lenskit.baseline.UserMeanBaseline;
 import org.grouplens.lenskit.baseline.UserMeanItemScorer;
 import org.grouplens.lenskit.core.LenskitConfiguration;
 import org.grouplens.lenskit.core.LenskitRecommender;
+import org.grouplens.lenskit.core.LenskitRecommenderEngine;
 import org.grouplens.lenskit.data.dao.EventDAO;
 import org.grouplens.lenskit.data.dao.SimpleFileRatingDAO;
 import org.grouplens.lenskit.knn.item.ItemItemScorer;
@@ -42,11 +43,15 @@ public class LensKitDemo {
         config.bind(UserVectorNormalizer.class)
                 .to(BaselineSubtractingUserVectorNormalizer.class);
 
-        config.bind(EventDAO.class).to(new SimpleFileRatingDAO(new File("resources/ratings.csv"), ","));
+        //https://github.com/lenskit/lenskit-hello/tree/master/data
+        config.bind(EventDAO.class).to(new SimpleFileRatingDAO(new File("E:\\workspace\\java\\java-learn\\lenskit-learn\\target\\classes\\ratings.csv"), ","));
+
+
         List<ScoredId> recommendations = null;
         double score = 0;
         try {
-            LenskitRecommender rec = LenskitRecommender.build(config);
+            LenskitRecommenderEngine engine = LenskitRecommenderEngine.build(config);
+            LenskitRecommender rec = engine.createRecommender();
             ItemRecommender irec = rec.getItemRecommender();
             recommendations = irec.recommend(42, 10);
 

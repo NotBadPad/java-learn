@@ -116,3 +116,6 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+*.csv
+*.xls

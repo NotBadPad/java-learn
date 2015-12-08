@@ -18,6 +18,7 @@
     <module>kafka-learn</module>
     <module>netty-learn</module>
       <module>lenskit-learn</module>
+      <module>other-learn</module>
   </modules>
 
   <dependencies>

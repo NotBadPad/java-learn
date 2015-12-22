@@ -9,4 +9,5 @@ package com.gj.design;
  */
 public class Singleton {
 
+
 }

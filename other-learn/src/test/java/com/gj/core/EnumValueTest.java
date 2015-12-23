@@ -1,5 +1,7 @@
 package com.gj.core;
 
+import java.math.BigDecimal;
+
 /**
  * Created with IntelliJ IDEA.
  * User: guojing

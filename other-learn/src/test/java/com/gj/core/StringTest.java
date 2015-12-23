@@ -17,5 +17,6 @@ public class StringTest {
         Integer i2 = new Integer(1);
         System.out.println(i1.hashCode());
         System.out.println(i2.hashCode());
+
     }
 }

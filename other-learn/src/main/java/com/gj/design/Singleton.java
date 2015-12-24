@@ -9,5 +9,21 @@ package com.gj.design;
  */
 public class Singleton {
 
+    private static Singleton singleton;
+
+    private Singleton(){
+
+    }
+
+    public static Singleton getInstence(){
+        if (singleton==null){
+            synchronized (singleton){
+                if (singleton==null){
+                    singleton=new Singleton();
+                }
+            }
+        }
+        return singleton;
+    }
 
 }

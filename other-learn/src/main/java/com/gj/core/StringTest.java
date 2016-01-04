@@ -1,6 +1,5 @@
 package com.gj.core;
 
-import org.junit.Test;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,7 +10,6 @@ import org.junit.Test;
  */
 public class StringTest {
 
-    @Test
     public void testIntegerHashCode(){
         Integer i1 = new Integer(1);
         Integer i2 = new Integer(1);

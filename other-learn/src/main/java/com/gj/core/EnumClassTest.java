@@ -1,7 +1,6 @@
 package com.gj.core;
 
 
-import org.junit.Test;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,7 +11,6 @@ import org.junit.Test;
  */
 public class EnumClassTest {
 
-    @Test
     public void testEnum(){
          System.out.println(EnumTest.ELEM1);
     }

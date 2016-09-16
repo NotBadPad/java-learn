@@ -12,12 +12,12 @@ import org.apache.zookeeper.ZooKeeper;
 public class ZkClientTest {
     public static void main(String[] avgs) {
         try {
-            ZooKeeper zk = new ZooKeeper("localhost:2181", 4000, new Watcher() {
+            ZooKeeper zk = new ZooKeeper("localhost:2183", 4000, new Watcher() {
                 public void process(WatchedEvent watchedEvent) {
                     System.out.println("已经触发了" + watchedEvent.getType() + "时间!");
                 }
             });
-            zk.create("/javatest","testRootData".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+            zk.create("/javatest1","testRootData".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
             zk.close();
         } catch (Exception e) {
             e.printStackTrace();

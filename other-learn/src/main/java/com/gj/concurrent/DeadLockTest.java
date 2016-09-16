@@ -17,7 +17,6 @@ public class DeadLockTest implements Runnable {
         this.flag=flag;
     }
 
-    @Override
     public void run() {
         if (flag==0){
             synchronized (DeadLockTest.o1){

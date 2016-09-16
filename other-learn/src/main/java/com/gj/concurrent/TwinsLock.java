@@ -8,18 +8,20 @@ import java.util.concurrent.locks.Lock;
 /**
  * Created by guojing on 16/9/16.
  */
-public class TwinsLock extends Lock {
+public class TwinsLock implements Lock {
+
+    private final Sync sync = new Sync(2);
 
     public void lock() {
-
+        sync.acquireShared(1);
     }
 
     public void lockInterruptibly() throws InterruptedException {
-
+        sync.acquireSharedInterruptibly(1);
     }
 
     public boolean tryLock() {
-        return false;
+        return sync.tryAcquireShared(1)>0;
     }
 
     public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
@@ -27,7 +29,7 @@ public class TwinsLock extends Lock {
     }
 
     public void unlock() {
-
+        sync.tryReleaseShared(1);
     }
 
     public Condition newCondition() {

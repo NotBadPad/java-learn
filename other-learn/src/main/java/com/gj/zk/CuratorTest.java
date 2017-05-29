@@ -5,10 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Maps;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.framework.recipes.cache.ChildData;
-import org.apache.curator.framework.recipes.cache.PathChildrenCache;
-import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
-import org.apache.curator.framework.recipes.cache.PathChildrenCacheListener;
+import org.apache.curator.framework.recipes.cache.*;
 import org.apache.curator.retry.RetryNTimes;
 
 import java.util.Map;
@@ -63,31 +60,46 @@ public class CuratorTest {
     }
 
     private static void watch(){
-        PathChildrenCache watcher = new PathChildrenCache(
-                client,
-                patch,
-                true    // if cache data
-        );
+//        PathChildrenCache watcher = new PathChildrenCache(
+//                client,
+//                patch,
+//                true    // if cache data
+//        );
+//
+//        PathChildrenCacheListener childrenCacheListener = new PathChildrenCacheListener() {
+//            public void childEvent(CuratorFramework curatorFramework, PathChildrenCacheEvent event) throws Exception {
+//                ChildData data = event.getData();
+//                if (data == null) {
+//                    System.out.println("No data in event[" + event + "]");
+//                } else {
+//                    System.out.println("Receive event: "
+//                            + "type=[" + event.getType() + "]"
+//                            + ", path=[" + data.getPath() + "]"
+//                            + ", data=[" + new String(data.getData()) + "]"
+//                            + ", stat=[" + data.getStat() + "]");
+//
+//                    refreshData(new String(data.getData()));
+//                }
+//            }
+//        };
+//
+//        watcher.getListenable().addListener(childrenCacheListener);
+//
+//        try {
+//            watcher.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);
+//            System.out.println("Register zk watcher successfully!");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
-        watcher.getListenable().addListener(new PathChildrenCacheListener() {
-            public void childEvent(CuratorFramework curatorFramework, PathChildrenCacheEvent event) throws Exception {
-                ChildData data = event.getData();
-                if (data == null) {
-                    System.out.println("No data in event[" + event + "]");
-                } else {
-                    System.out.println("Receive event: "
-                            + "type=[" + event.getType() + "]"
-                            + ", path=[" + data.getPath() + "]"
-                            + ", data=[" + new String(data.getData()) + "]"
-                            + ", stat=[" + data.getStat() + "]");
-
-                    refreshData(new String(data.getData()));
-                }
+        NodeCache nodeCache = new NodeCache(client, patch, true);
+        nodeCache.getListenable().addListener(new NodeCacheListener() {
+            public void nodeChanged() throws Exception {
+                System.out.println("the test node is change and result is :");
             }
         });
-
         try {
-            watcher.start(PathChildrenCache.StartMode.BUILD_INITIAL_CACHE);
+            nodeCache.start();
             System.out.println("Register zk watcher successfully!");
         } catch (Exception e) {
             e.printStackTrace();

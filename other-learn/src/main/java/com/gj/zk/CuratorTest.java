@@ -5,7 +5,8 @@ import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Maps;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.framework.recipes.cache.*;
+import org.apache.curator.framework.recipes.cache.NodeCache;
+import org.apache.curator.framework.recipes.cache.NodeCacheListener;
 import org.apache.curator.retry.RetryNTimes;
 
 import java.util.Map;
@@ -14,17 +15,20 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
+ *
  * Created by guojing on 2017/5/29.
  */
 public class CuratorTest {
 
     private static final Map<String, String> configMap = Maps.newConcurrentMap();
+
+
+    private static final String watch_patch = "/configserver/dev/com";
+    private static final String patch = "/configserver/dev/com/goodtemper";
     private static final CuratorFramework client = CuratorFrameworkFactory.newClient(
             "localhost:2181",
             new RetryNTimes(10, 5000)
     );
-
-    private static final String patch = "/configserver/dev/com/goodtemper";
 
     public static void main(String[] avgs) {
         client.start();
@@ -32,12 +36,10 @@ public class CuratorTest {
         //启动watch
         watch();
 
-        ScheduledExecutorService service = Executors
-                .newSingleThreadScheduledExecutor();
-        //启动轮询刷新
-//        new RefreshDataClass().run();
+        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+//        //启动轮询刷新
         service.scheduleAtFixedRate(new RefreshDataClass(), 5, 4, TimeUnit.SECONDS);
-
+//
         //启动轮询打印
         service.scheduleAtFixedRate(new PrintClass(), 10, 5, TimeUnit.SECONDS);
 
@@ -60,46 +62,25 @@ public class CuratorTest {
     }
 
     private static void watch(){
-//        PathChildrenCache watcher = new PathChildrenCache(
-//                client,
-//                patch,
-//                true    // if cache data
-//        );
-//
-//        PathChildrenCacheListener childrenCacheListener = new PathChildrenCacheListener() {
-//            public void childEvent(CuratorFramework curatorFramework, PathChildrenCacheEvent event) throws Exception {
-//                ChildData data = event.getData();
-//                if (data == null) {
-//                    System.out.println("No data in event[" + event + "]");
-//                } else {
-//                    System.out.println("Receive event: "
-//                            + "type=[" + event.getType() + "]"
-//                            + ", path=[" + data.getPath() + "]"
-//                            + ", data=[" + new String(data.getData()) + "]"
-//                            + ", stat=[" + data.getStat() + "]");
-//
-//                    refreshData(new String(data.getData()));
-//                }
-//            }
-//        };
-//
-//        watcher.getListenable().addListener(childrenCacheListener);
-//
-//        try {
-//            watcher.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);
-//            System.out.println("Register zk watcher successfully!");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        final NodeCache watcher = new NodeCache(
+                client,
+                patch,
+                false
+        );
 
-        NodeCache nodeCache = new NodeCache(client, patch, true);
-        nodeCache.getListenable().addListener(new NodeCacheListener() {
+        NodeCacheListener childrenCacheListener = new NodeCacheListener() {
+            @Override
             public void nodeChanged() throws Exception {
-                System.out.println("the test node is change and result is :");
+                String value = new String(watcher.getCurrentData().getData());
+                System.out.println("refresh data listener:"+value);
+                refreshData(value);
             }
-        });
+        };
+
+        watcher.getListenable().addListener(childrenCacheListener);
+
         try {
-            nodeCache.start();
+            watcher.start(true);
             System.out.println("Register zk watcher successfully!");
         } catch (Exception e) {
             e.printStackTrace();
@@ -119,6 +100,7 @@ public class CuratorTest {
         public void run() {
             try {
                 String value = new String(client.getData().forPath(patch));
+                System.out.println("refresh data:"+value);
                 refreshData(value);
             } catch (Exception e) {
                 e.printStackTrace();

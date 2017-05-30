@@ -19,6 +19,7 @@
         <module>netty-learn</module>
         <module>lenskit-learn</module>
         <module>other-learn</module>
+        <module>configserverclient</module>
     </modules>
 
 
